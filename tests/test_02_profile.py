@@ -16,7 +16,7 @@ class TestProfile:
         main_page.open_main_page()
         main_page.click_account_button()
 
-        assert driver.current_url == UrlsSiteData.LOGIN_URL, "Не удалось перейти на страницу авторизации"
+        assert main_page.is_current_url(UrlsSiteData.LOGIN_URL), "Не удалось перейти на страницу авторизации"
 
     @allure.title("2. Переход в раздел «История заказов»")
     def test_order_history_access(self, driver, login_to_profile):
@@ -30,12 +30,12 @@ class TestProfile:
         login_to_profile()
         main_page.wait_main_page()
 
-        assert driver.current_url == UrlsSiteData.MAIN_URL, "Не удалось войти в систему"
+        assert main_page.is_on_main_page(), "Не удалось войти в систему"
 
         main_page.click_account_button()
         profile_page.go_to_order_history()
 
-        assert driver.current_url == UrlsSiteData.ORDER_HISTORY_URL, "Не удалось перейти в раздел История заказов"
+        assert profile_page.is_current_url(UrlsSiteData.ORDER_HISTORY_URL), "Не удалось перейти в раздел История заказов"
 
     @allure.title("3. Выход из аккаунта.")
     def test_logout(self, driver, login_to_profile):
@@ -48,9 +48,9 @@ class TestProfile:
         login_to_profile()
 
         main_page.wait_main_page()
-        assert driver.current_url == UrlsSiteData.MAIN_URL, "Не удалось войти в систему"
+        assert main_page.is_on_main_page(), "Не удалось войти в систему"
 
         main_page.click_account_button()
         profile_page.logout()
 
-        assert driver.current_url == UrlsSiteData.PROFILE_URL, "Не удалось выйти из аккаунта"
+        assert profile_page.is_current_url(UrlsSiteData.PROFILE_URL), "Не удалось выйти из аккаунта"

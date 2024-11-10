@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.firefox import GeckoDriverManager
 from data.test_data import TestUserData
 from page_objects.login_page import LoginPage
 import os
@@ -19,11 +20,14 @@ def driver(request):
             chrome_options = webdriver.ChromeOptions()
             driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
         elif browser == "firefox":
+
+            # Вариант 1: Используем GeckoDriverManager для автоматической загрузки драйвера
             firefox_options = webdriver.FirefoxOptions()
-            # Указываем прямой путь к geckodriver
-            geckodriver_path = "/usr/local/bin/geckodriver"
-            driver = webdriver.Firefox(service=FirefoxService(executable_path=geckodriver_path),
-                                       options=firefox_options)
+            driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=firefox_options)
+
+            # Вариант 2: Запасной вариант с указанием прямого пути к geckodriver
+            # geckodriver_path = "/usr/local/bin/geckodriver"
+            # driver = webdriver.Firefox(service=FirefoxService(executable_path=geckodriver_path), options=firefox_options)
         else:
             raise ValueError(f"Браузер {browser} не поддерживается. Используйте 'chrome' или 'firefox'.")
 

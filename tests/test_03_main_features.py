@@ -28,7 +28,8 @@ class TestMainFeatures:
         main_page.open_main_page()
         main_page.click_order_feed()
 
-        assert driver.current_url == UrlsSiteData.ORDER_FEED_URL
+        assert main_page.is_current_url(UrlsSiteData.ORDER_FEED_URL)
+
 
     @allure.title("3. Если кликнуть на ингредиент, появится всплывающее окно с деталями")
     def test_open_ingredient_modal(self, driver):
@@ -80,7 +81,7 @@ class TestMainFeatures:
         main_page.add_ingredient_to_order()
         main_page.click_login_button()
 
-        assert driver.current_url == UrlsSiteData.LOGIN_URL
+        assert main_page.is_current_url(UrlsSiteData.LOGIN_URL)
 
 
 

@@ -13,7 +13,8 @@ class TestRestorePassword:
         page = LoginPage(driver)
         page.open_login_page()
         page.click_restore_password_button()
-        assert driver.current_url == UrlsSiteData.FORGOT_PASSWORD_URL, "Не удалось перейти на страницу восстановления пароля"
+
+        assert page.is_current_url(UrlsSiteData.FORGOT_PASSWORD_URL), "Не удалось перейти на страницу восстановления пароля"
 
     @allure.title("2. Ввод почты и клик по кнопке «Восстановить»")
     def test_restore_password_functionality(self, driver):
@@ -24,7 +25,7 @@ class TestRestorePassword:
         page.click_restore_button()
         page.wait_restore_password_page()
 
-        assert driver.current_url == UrlsSiteData.RESET_PASSWORD_URL, "Не удалось перейти на страницу с вводом пароля и кода из письма"
+        assert page.is_current_url(UrlsSiteData.RESET_PASSWORD_URL), "Не удалось перейти на страницу с вводом пароля и кода из письма"
 
 
     @allure.title("3. Клик по кнопке показать/скрыть пароль делает поле активным — подсвечивает его.")
