@@ -1,8 +1,5 @@
 import allure
-from selenium.webdriver.remote.webdriver import WebDriver
 from locators.profile_page_locators import ProfilePageLocators
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from page_objects.base_page import BasePage
 
 class ProfilePage(BasePage):

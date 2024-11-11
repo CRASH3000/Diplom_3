@@ -85,13 +85,13 @@ class TestOrderFeed:
         login_to_profile()
 
         # Открываем второе окно для Ленты заказов
-        driver.execute_script("window.open('https://stellarburgers.nomoreparties.site/feed', '_blank');")
-        windows = driver.window_handles
+        main_page.open_new_window('https://stellarburgers.nomoreparties.site/feed')
+        windows = main_page.get_window_handles()
         main_window = windows[0]
         feed_window = windows[1]
 
         # Оформляем заказ в первом окне
-        driver.switch_to.window(main_window)
+        main_page.switch_to_window(main_window)
         main_page.wait_main_page()
         main_page.add_ingredient_to_order()
         main_page.click_order_button()
@@ -100,7 +100,7 @@ class TestOrderFeed:
         order_number = main_page.get_order_number()
 
         # Переходим во второе окно с лентой заказов
-        driver.switch_to.window(feed_window)
+        main_page.switch_to_window(feed_window)
 
         # Проверяем, что заказ появился в разделе "В работе"
         assert order_feed_page.check_order_in_progress(

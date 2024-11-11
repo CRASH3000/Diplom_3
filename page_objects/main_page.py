@@ -1,10 +1,5 @@
 import allure
-from selenium.webdriver.remote.webdriver import WebDriver
 from locators.main_page_locators import MainPageLocators
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver import ActionChains
-from selenium.common.exceptions import TimeoutException
 from data.urls_site_data import UrlsSiteData
 from selenium.common.exceptions import ElementClickInterceptedException
 from page_objects.base_page import BasePage
@@ -59,12 +54,7 @@ class MainPage(BasePage):
 
     @allure.step("Перетаскиваем ингредиент в зону 'Выбранные ингредиенты'")
     def add_ingredient_to_order(self):
-        ingredient = self.driver.find_element(*MainPageLocators.INGREDIENT_ITEM)
-        droppable_area = self.driver.find_element(*MainPageLocators.DROPPABLE_AREA)
-
-        # Используем ActionChains для перетаскивания
-        actions = ActionChains(self.driver)
-        actions.click_and_hold(ingredient).move_to_element(droppable_area).release().perform()
+        self.drag_and_drop(MainPageLocators.INGREDIENT_ITEM, MainPageLocators.DROPPABLE_AREA)
 
     @allure.step("Получение количества добавленных ингредиентов")
     def get_ingredient_count(self):
@@ -80,22 +70,18 @@ class MainPage(BasePage):
 
     @allure.step("Закрытие модального окна заказа")
     def close_modal_order(self):
-        self.wait.until(
-            EC.visibility_of_element_located(MainPageLocators.MODAL_CLOSE_ORDER_BUTTON)
-        )
+        self.wait_until_visible(MainPageLocators.MODAL_CLOSE_ORDER_BUTTON)
 
         # Проверяем, что кнопка закрытия не перекрыта и доступна для клика
         is_clicked = False
         while not is_clicked:
             try:
                 # Пробуем кликнуть на кнопку
-                self.driver.find_element(*MainPageLocators.MODAL_CLOSE_ORDER_BUTTON).click()
+                self.click(MainPageLocators.MODAL_CLOSE_ORDER_BUTTON)
                 is_clicked = True  # Если клик успешен, устанавливаем флаг
             except ElementClickInterceptedException:
                 # Если элемент все еще перекрыт, ждем перед повторной попыткой
-                self.wait.until(
-                    EC.visibility_of_element_located(MainPageLocators.MODAL_CLOSE_ORDER_BUTTON)
-                )
+                self.wait_until_visible(MainPageLocators.MODAL_CLOSE_ORDER_BUTTON)
 
     @allure.step("Проверка отсутствия модального окна заказа")
     def is_modal_order_not_displayed(self):
@@ -104,13 +90,11 @@ class MainPage(BasePage):
     @allure.step("Получение номера заказа")
     def get_order_number(self):
         # Ожидание появления номера заказа в модальном окне
-        self.wait.until(
-            EC.visibility_of_element_located(MainPageLocators.ORDER_NUMBER_MODAL)
-        )
+        self.wait_until_visible(MainPageLocators.ORDER_NUMBER_MODAL)
 
         # Ожидание, пока номер заказа изменится с заглушки "9999" на другой номер
-        order_number_element = self.driver.find_element(*MainPageLocators.ORDER_NUMBER_MODAL)
-        self.wait.until(lambda driver: order_number_element.text != "9999")
+        order_number_element = self.find_element(MainPageLocators.ORDER_NUMBER_MODAL)
+        self.wait_for_condition(lambda driver: order_number_element.text != "9999")
 
         return order_number_element.text
 

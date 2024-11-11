@@ -17,7 +17,7 @@ class TestMainFeatures:
         main_page.click_constructor()
 
         # Проверка URL
-        assert driver.current_url == UrlsSiteData.MAIN_URL
+        assert main_page.is_on_main_page(), "Не удалось перейти на главную страницу"
         # Проверка на наличие заголовка "Соберите бургер"
         assert main_page.is_burger_header_displayed(), "Элемент 'Соберите бургер' не найден на странице"
 

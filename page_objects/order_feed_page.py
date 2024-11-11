@@ -1,9 +1,5 @@
 import allure
-from selenium.common import TimeoutException
-from selenium.webdriver.remote.webdriver import WebDriver
 from locators.order_feed_locators import OrderFeedPageLocators
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from data.urls_site_data import UrlsSiteData
 from page_objects.base_page import BasePage
 
@@ -26,16 +22,16 @@ class OrderFeedPage(BasePage):
 
     @allure.step("Поиск заказа в ленте по номеру")
     def find_order_in_feed(self, order_number):
-        self.wait.until(
-            EC.visibility_of_element_located(OrderFeedPageLocators.ORDER_FEED_LIST)
-        )
+        # Форматируем номер заказа с префиксом, если он используется в интерфейсе
+        order_number_with_prefix = f"#{order_number.lstrip('#')}"
 
-        # Извлечение всех номеров заказов в ленте
-        orders_in_feed_elements = self.driver.find_elements(*OrderFeedPageLocators.ORDER_FEED_LIST)
-        order_numbers_in_feed = [order.text for order in orders_in_feed_elements if order.text.startswith("#")]
+        # Убедимся, что список заказов виден
+        self.wait_until_visible(OrderFeedPageLocators.ORDER_FEED_LIST)
 
-        # Проверка наличия искомого заказа
-        return order_number in order_numbers_in_feed
+        # Используем уже методы "is_text_in_elements" в BasePage для проверки текста в элементах
+        return self.is_text_in_elements(OrderFeedPageLocators.ORDER_FEED_LIST, order_number_with_prefix)
+
+    @allure.step("Проверка, что заказ в разделе 'В работе'")
 
     @allure.step("Получение количества выполненных заказов за всё время")
     def get_completed_total_orders_count(self):
@@ -49,16 +45,14 @@ class OrderFeedPage(BasePage):
 
     @allure.step("Проверка наличия заказа в разделе 'В работе'")
     def check_order_in_progress(self, order_number):
-        return self.wait_for_condition(lambda d: self.is_order_in_progress(d, order_number))
+        return self.wait_for_condition(lambda _: self.is_order_in_progress(order_number))
 
     @allure.step("Проверка, что заказ в разделе 'В работе'")
-    def is_order_in_progress(self, driver, order_number):
+    def is_order_in_progress(self, order_number):
         # Извлекаем все заказы в разделе "В работе"
-        orders_in_progress_elements = driver.find_elements(*OrderFeedPageLocators.ORDERS_IN_PROGRESS)
+        orders_in_progress_elements = self.find_elements(OrderFeedPageLocators.ORDERS_IN_PROGRESS)
         orders_in_progress = [element.text.lstrip("0") for element in
                               orders_in_progress_elements]  # Убираем ведущие нули
 
         # Проверка, что номер заказа присутствует в списке
         return order_number.lstrip("0") in orders_in_progress  # Убираем ведущие нули и из order_number для сравнения
-
-

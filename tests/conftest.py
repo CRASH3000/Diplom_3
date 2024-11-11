@@ -7,7 +7,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.firefox import GeckoDriverManager
 from data.test_data import TestUserData
 from page_objects.login_page import LoginPage
-import os
+
 
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="chrome", help="Выбор браузера: chrome или firefox")
